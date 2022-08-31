@@ -1,0 +1,1 @@
+shell basics read me
