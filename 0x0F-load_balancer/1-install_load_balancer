@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Install HAproxy
+sudo apt-get update
+sudo apt-get install -y haproxy
+#contiguration of HAproxy using here documment
+sudo cat <<EOF > /etc/haproxy/haproxy.cfg
+global
+    maxconn 4096
+defaults
+    mode http
+    timeout connect 500ms
+    timeout client 500ms
+    timeout server 500ms
+frontend http-in
+    bind *:80
+    default_backend servers
+backend servers
+    balance roundrobin
+    server 153283-web-01 54.173.141.74
+    server 153283-web-02 100.25.17.160
+EOF
+# Restart HAproxy and enable it to start on boot
+sudo systemctl restart haproxy
+sudo systemctl enable haproxy
