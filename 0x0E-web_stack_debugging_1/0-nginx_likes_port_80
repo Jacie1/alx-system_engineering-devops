@@ -1,4 +1,47 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-sudo service nginx start
+# Update packages
+sudo apt update
+sudo apt upgrade -y
+
+# Install Nginx
+sudo apt install -y nginx
+
+# Get list of active IPv4 IPs
+ip_addresses=$(ip -4 addr | grep inet | awk '{print $2}' | cut -d'/' -f1)
+
+# Configure Nginx
+sudo mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+sudo touch /etc/nginx/sites-available/default
+sudo chmod 666 /etc/nginx/sites-available/default
+sudo cat <<EOF > /etc/nginx/sites-available/default
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
+}
+EOF
+
+# Add server blocks for each IP address
+for ip_address in $ip_addresses; do
+    sudo cat <<EOF > /etc/nginx/sites-available/$ip_address
+server {
+    listen $ip_address:80;
+    server_name $ip_address;
+
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
+}
+EOF
+done
+
+# Enable server blocks and restart Nginx
+sudo ln -s /etc/nginx/sites-available/* /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+
