@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+#Checking who am i to know the kind of privilege i have when i logged in
+sudo -u "$1" whoami
