@@ -16,8 +16,8 @@ frontend http-in
     default_backend servers
 backend servers
     balance roundrobin
-    server 153283-web-01 54.173.141.74
-    server 153283-web-02 100.25.17.160
+    server 131967-web-01 54.173.141.74
+    server 131967-web-02 100.25.17.160
 EOF
 # Restart HAproxy and enable it to start on boot
 sudo systemctl restart haproxy
