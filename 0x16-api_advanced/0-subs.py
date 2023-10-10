@@ -1,36 +1,29 @@
 #!/usr/bin/python3
-
+"""A module containing function for working with number of subscribers
 """
-Query a subreddit and return the number of
-total subscribers in that subredit
-"""
-
-from requests import get
-from sys import argv
+import requests
 
 
-headers = {
-    "User-Agent": "Of course I had to use a custom User-Agent",
-    "X-Forwared-For": "iamthecavalry"
-}
+URL = 'https://www.reddit.com'
 
 
-def number_of_subscribers(subreddit: str) -> int:
+def number_of_subscribers(subreddit):
+    """Retrives the number of subscibers in a given subreddit
     """
-    Query the subreddit and return the number of
-    Active subs. 
-    """
-    response = get("https://www.reddit.com/r/{}/about.json".format(subreddit),
-                   headers=headers)
-    data = response.json()
-    try:
-        if 'error' in data.keys():
-            return 0
-        else:
-            return data['data']['subscribers']
-    except Exception as e:
-        return 0
-
-
-if __name__ == "__main__":
-    print(number_of_subscribers(argv[1]))
+    headers = {
+            'Accept': 'application/json',
+            'User-Agent': ' '.join([
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                'AppleWebKit/537.36 (KHTML, like Gecko)',
+                'Chrome/112.0.0.0',
+                'Safari/537.36'
+                ])
+            }
+    result = requests.get(
+            '{}/r/{}/about/.json'.format(URL, subreddit),
+            headers=headers,
+            allow_redirects=False
+            )
+    if result.status_code == 200:
+        return result.json()['data']['subscribers']
+    return 0
