@@ -1,6 +1,6 @@
-# Fix a wordpress site
-exec { 'fix-wordpress':
-command => 'bash -c "sed -i s/class-wp-locale.phpp/class-wp-locale.php/ \
-/var/www/html/wp-settings.php; service apache2 restart"',
-path    => '/usr/bin:/usr/sbin:/bin'
+# Fix 500 error when a GET HTTP method is requested to Apache web server
+
+exec {'replace':
+  provider => shell,
+  command  => 'sed -i "s/phpp/php/g" /var/www/html/wp-settings.php'
 }
